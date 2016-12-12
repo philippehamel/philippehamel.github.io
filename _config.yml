@@ -1,0 +1,37 @@
+# Site settings
+title: Le BlogueuR
+email: p.hamel@protonmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  Étudiant, passionné de statistiques et de programmation. Cette plateforme
+  servira à partager mes intérêts.
+url: "https://philippehamel.github.io" # the base hostname & protocol for your site
+github_username:  philippehamel
+permalink: /:year/:month/:day/:title.html
+# highlighter:  rouge (on my Mac, need to set this to rouge or flas with Jekyll 3.0)
+author:  Philippe Hamel
+
+baseurl: "/" # the sub-path of your proejct site, e.g. /myProject/
+             # or "/" for user site
+
+# limit posts on Home page to this number:
+homepostlimit:  4
+
+# Disqus comments:
+disqus:           true
+shortname:        philippehamel-github-io
+
+# Social Media
+twitter:          false # add a twitter button to each post
+facebook:         false # add a facebook share button to each post
+
+# Build settings
+
+# rendering engine
+markdown: kramdown
+
+author:
+  name:           'Philippe Hamel'
+  url:            https://philippehamel.github.io
+
+github:
+  repo:           https://github.com/philippehamel

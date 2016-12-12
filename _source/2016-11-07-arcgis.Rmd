@@ -1,0 +1,78 @@
+---
+layout: post
+comments:  true
+title:  "Carte ArcGIS à l'aide de R"
+date: 2016-11-07
+published: true
+categories: ['Carte']
+output:
+  html_document:
+    mathjax:  default
+---
+
+L'objectif de ce tutoriel est de montrer comment faire des cartes à l'aide d'un *shape file* dans R. Je ne suis pas un géographe, je n'ai aucune idée comment aller chercher un *shape file* dans une bibliothèque ArcGIS, ou encore quel est le meilleur type de projection. Je demande habituellement à un ami d'aller chercher le *shape file* pour moi. Pour le bien de l'exemple, j'ai inclus un *shape file* des régions administratives du Québec sur lequel j'ai déjà eu besoin de travailler.
+
+Les *packages* nécessaires pour construire la carte sont:
+```{r include=FALSE}
+require(rgdal)
+require(dplyr)
+require(ggmap)
+require(maptools)
+```
+```{r, eval=FALSE}
+require(rgdal)
+require(dplyr)
+require(ggmap)
+require(maptools)
+```
+
+Une fois les *packages* installés, il faut utiliser la commande suivant pour importer les données du *shape file*
+```{r, warning=FALSE}
+shp <- readOGR(dsn = "/Users/philippehamel1/Desktop/Blog/Map_R/data/shp", 
+               layer = "Region_admin_region")
+```
+L'argument **dsn** indique le répertoire où se situe le *shape file*. L'argument **layer** indique le préfixe des couches du *shape file*.
+
+L'objet que l'on vient de créer contient beaucoup d'éléments et n'est pas manipulable, il faut donc les transformer avant de pouvoir l'utiliser. Voici la liste des éléments dont il est composé :
+```{r}
+summary(shp)
+```
+Il contient 14 éléments, mais un seul de ceux-ci nous intéresse, celui qui correspond aux régions administratives. Dans le cas de notre *shape file*, c'est l'élément **resnmreg**.
+```{r}
+levels(shp$resnmreg)
+```
+Il faut utiliser la fontion **fortify** qui permet d'e créer un data.frame avec l'élément que l'on désire comme variable servant d'identifiant.
+```{r}
+shape <- fortify(shp, region = "resnmreg")
+```
+
+Pour des raisons d'éfficacité, nous allons générer les données que nous allons cartographier.
+```{r}
+set.seed(666)
+data <- data.frame(id = levels(shp$resnmreg), 
+                   value = sample(x = 0:100, 
+                                  size =length(levels(shp$resnmreg)), 
+                                  replace = T))
+```
+Les données générer ressemble à ceci :
+```{r}
+head(data)
+```
+Puis on joint les deux data.frame, *data* et *shape*. Il faut s'assurer que les deux data.frame possède une variable en commun et que cette variable est codée de la même manière. Ici on utilise la varaible *id* pour fusionner les deux jeux de données.
+```{r, warning=FALSE}
+plot.data <- left_join(x = shape, y = data, by = "id")
+```
+L'étape finale est de construire la carte avec l'aide de **ggplot** qui à la capacité de produire des polygones.
+```{r}
+carte <- ggplot() + 
+    geom_polygon(data = plot.data, aes(x = long, y = lat, group = group, fill = value), 
+                 color = "black", size = 0.25) +
+    scale_fill_distiller(direction = 1) +
+    theme_nothing(legend = T) +
+    ggtitle("Répartition de la valeur aléatoire")
+carte
+```
+
+Les arguments *x* et *y* dans l'*aesthetic* doivent absolument être la longitude et la latitude (respectivement). La variable associée à l'arguement *fill* est responsable du remplissage des polygones. Les cartes créées avec **ggplot** ont habituellement un hideux fond gris. La commande *theme_nothing* nous permet de le faire disparaître, il suffit de lui indiquer que l'on désire garder la légende.
+
+

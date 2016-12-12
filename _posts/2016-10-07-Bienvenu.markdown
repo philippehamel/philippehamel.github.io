@@ -1,0 +1,17 @@
+---
+layout: post
+comments:  true
+title: "Bienvenue"
+date: 2016-10-07 20:00:00
+published: true
+categories: [Bienvenu]
+output:
+  html_document:
+    mathjax:  default
+---
+
+Bienvenue sur mon nouveau blog!!
+
+Il y a quelques jours, je suis tombé sur une page de [Yihui Xie](https://github.com/yihui/knitr-jekyll) où il exlique comment construire un site **Jekyll** pour poster avec **R markdown** à partir de [GitHub Pages](https://pages.github.com/). Le processus est difficile, mais beaucoup plus intéresssant qu'un **Wordpress**, spécialement pour publier du code R. Étant très satisfait de mes tests avec différents templates et très peu satisfait de la qualité des articles sur mon **Wordpress**, j'ai décidé de recommencer ici!
+
+Dans les prochaines semaines, je vais poster trois tutoriels sur la construction de cartes en R.
