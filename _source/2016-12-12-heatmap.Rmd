@@ -1,0 +1,149 @@
+---
+layout: post
+comments:  true
+title:  "Heat Map"
+date: 2016-12-12
+published: true
+categories: ['Carte']
+output:
+  html_document:
+    mathjax:  default
+---
+Si vous avez suivi les deux autres tutoriels, celui-ci ne posera aucune dificulté. Le concept est de superposer les données créées dans le tutoriel sur les fichiers **arcGIS** et la base créée dans le tutoriel sur les cartes google. Les **packages** nécessaires sont :
+
+```{r include=FALSE}
+require(rgdal)
+require(rgeos)
+require(dplyr)
+require(ggmap)
+require(maptools)
+require(scales)
+require(raster)
+```
+```{r, eval=FALSE}
+require(rgdal)
+require(rgeos)
+require(dplyr)
+require(ggmap)
+require(maptools)
+require(scales)
+require(raster)
+```
+
+Pour faire chagement, je suis aller chercher un *shape file* de l'état d'Oklahoma sur le site internet du **Census Bureau** qui est accessible [ici] (http://www.census.gov/cgi-bin/geo/shapefiles/index.php). Pour des raisons de reproducibilité, j'ai inclus le **shape file** utilisé ici dans le fichier [data] (https://github.com/philippehamel/data-BlogueuR/tree/master/Carte) de mon GitHub. Il faut commencer par importer le **shape file** en R et le transformer en **data.frame**, comme dans le précédent tutoriel.
+
+```{r, warning=FALSE}
+shp <- readOGR(dsn = "/Users/philippehamel1/Desktop/data/tl_2016_40_cousub", 
+               layer = "tl_2016_40_cousub")
+shape <- fortify(shp, region = "NAME")
+```
+
+Ensuite, il faut avoir des données à placer dans la carte. Pour des raisons de temps, je vais générer les données aléatoirement. Pour faire changement du précédent tutoriel, je vais générer un taux plutôt qu'une fréquence, puis joindre les deux **data.frame**.
+
+```{r, warning=FALSE}
+set.seed(666)
+data <- data.frame(id = levels(shp$NAME), 
+                   value = rnorm(mean = 0.5,
+                                 sd = 0.15,
+                                 n =length(levels(shp$NAME))))
+```
+
+Les données générées ressemble à ceci :
+
+```{r, warning=FALSE}
+head(data)
+```
+```{r, warning=FALSE}
+plot.data <- left_join(x = shape, y = data, by = "id")
+```
+
+le résultat est la carte suivante :
+
+```{r}
+carte <- ggplot() + 
+    geom_polygon(data = plot.data, aes(x = long, y = lat, group = group, fill = value), 
+                 size = 0.25) +
+    scale_fill_distiller(palette = "YlOrRd",labels = percent, 
+                         breaks = pretty_breaks(n = 10), values = c(1,0)) +
+    ggtitle("Répartition du taux aléatoire") +
+    coord_map()
+carte
+```
+
+La prochaine étape est de générer la base de notre carte. Cette partie est expliquer dans le tutoriel sur l'utilisation des cartes google.
+
+```{r, warning=FALSE}
+map <- get_map(location = "Oklahoma City", zoom = 8, maptype = "roadmap")
+```
+
+Le résultat est le suivant :
+
+```{r, echo=FALSE, warning=FALSE}
+heatmap <- ggmap(map)
+heatmap
+```
+
+La dernière étape est de simplement superposer les deux couches.
+
+```{r, warning = FALSE}
+heatmap <- ggmap(map) +
+    geom_polygon(data = plot.data, 
+                 aes(x = long, y = lat, group = group, fill = value), 
+                 size = 0.25, 
+                 colour = NA, 
+                 alpha = 0.5) +
+    scale_fill_distiller(palette = "YlOrRd",labels = percent, 
+                         breaks = pretty_breaks(n = 10), 
+                         values = c(1,0)) +
+    ggtitle("Répartition du taux aléatoire") +
+    labs(fill = "") +
+    theme_nothing(legend = TRUE) +
+    coord_map()
+heatmap
+```
+
+Pour construire ce type de carte, il est important de s'assurer que la base et les données ont les bonnes longitudes et lattitudes. R utilise ces coordonnées afin de précisement superposer les deux couches.
+
+À ce point, toute la carte est là, mais elle a besoin de quelques modifications avant d'être prête pour une présentation. On peut voir que certains *county* ont été envelés par R au lieu d'être coupés dans la carte. Pour contourner le problème, on ajuste le **shape file** afin qu'il ne dépasse pas la base de la carte avec le code suivant :
+
+```{r, warning = FALSE}
+box <- as(extent(as.numeric(attr(map, "bb"))[c(2,4,1,3)] +
+                     c(.001, -.001, .001, -.001)), "SpatialPolygons")
+
+tract <- readOGR(dsn = "/Users/philippehamel1/Desktop/data/tl_2016_40_cousub",
+                 layer = "tl_2016_40_cousub")
+
+proj4string(box) <- CRS(summary(tract)[[4]])
+
+tractSub <- gIntersection(tract, box, byid = T,
+                          id = as.character(tract$NAME))
+
+tractSub <- fortify(tractSub, region = "NAME")
+
+DataFinal <- left_join(tractSub, data, by = "id")
+```
+
+Ce que ces ligne accomplissent est de créer un **subset** des polygones du **shape file** original en se servant des coordonés de la carte appelé **map**.
+
+Ensuite, il suffit d'utiliser les nouveaux polygones appelé **DataFinal** afin de générer notre carte.
+
+```{r, warning = FALSE}
+heatmap <- ggmap(map) +
+    geom_polygon(data = DataFinal, 
+                 aes(x = long, y = lat, group = group, fill = value), 
+                 size = 0.25, 
+                 colour = NA, 
+                 alpha = 0.5) +
+    scale_fill_distiller(palette = "YlOrRd",labels = percent, 
+                         breaks = pretty_breaks(n = 10), 
+                         values = c(1,0)) +
+    labs(fill = "",
+         title = "Répartition de données aléatoire",
+         subtitle = "à Oklahoma City") +
+    theme_nothing(legend = TRUE) +
+    coord_map()
+heatmap
+```
+
+Ajouter des cartes à un article est souvent une très bonne idée, ça aide le lecteur à se situer et visualiser les données. Par contre, une carte mal conçu est pire que de ne pas avoir de cartes du tout. Il est important de réfléchir à la nature de l'information de vous essayez de communiquer au lecteur et en tenir compte quand vous faites le choix du type de carte.
+    
