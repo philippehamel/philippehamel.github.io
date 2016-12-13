@@ -30,7 +30,7 @@ require(scales)
 require(raster)
 ```
 
-Pour faire chagement, je suis aller chercher un *shape file* de l'état d'Oklahoma sur le site internet du **Census Bureau** qui est accessible [ici] (http://www.census.gov/cgi-bin/geo/shapefiles/index.php). Pour des raisons de reproducibilité, j'ai inclus le **shape file** utilisé ici dans le fichier [data] (https://github.com/philippehamel/data-BlogueuR/tree/master/Carte) de mon GitHub. Il faut commencer par importer le **shape file** en R et le transformer en **data.frame**, comme dans le précédent tutoriel.
+Pour faire chagement, je suis aller chercher un *shape file* de l'état d'Oklahoma sur le site internet du **Census Bureau** qui est accessible [ici](http://www.census.gov/cgi-bin/geo/shapefiles/index.php). Pour des raisons de reproducibilité, j'ai inclus le **shape file** utilisé ici dans le fichier [data](https://github.com/philippehamel/data-BlogueuR/tree/master/Carte) de mon GitHub. Il faut commencer par importer le **shape file** en R et le transformer en **data.frame**, comme dans le précédent tutoriel.
 
 ```{r, warning=FALSE}
 shp <- readOGR(dsn = "/Users/philippehamel1/Desktop/data/tl_2016_40_cousub", 
