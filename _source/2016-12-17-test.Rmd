@@ -1,10 +1,10 @@
 ---
 layout: post
 comments:  true
-title:  "TEST"
-date: Sys.Date()
+title:  "Test"
+date: 2016-12-17
 published: true
-categories: ['Test]
+categories: ['Test']
 output:
   html_document:
     mathjax:  default
