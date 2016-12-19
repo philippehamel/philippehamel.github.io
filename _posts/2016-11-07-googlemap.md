@@ -108,7 +108,7 @@ Puis il faut créer un objet qui servira de base à la carte :
 
 
 {% highlight r %}
-map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 6)
+map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 11)
 {% endhighlight %}
 La fonction **get_map**, qui va chercher la carte dans google map, prend au minimum 4 arguments. L'argument **location** est le lieu que l'on veut avoir sur la carte. L'argument **zoom** est l'équivalent des + et - sur google map, il permet de s'éloigner ou se rapprocher du lieu qui à été sélectionné. L'arguement **source** est la source de provenance de la carte. Il il y a au moins 4 sources disponibles, et chacune a ses propres **maptype**.
 La *cheat sheet* suivante les explique mieux que j'en serais capable dans cet article : <https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf>.
@@ -117,8 +117,11 @@ La dernière étape est d'y superposer les points à l'aide de **ggplot** :
 
 {% highlight r %}
 Borne_point <-   ggmap(map) +
-    geom_point(data = BorneQc, aes(x = Longitude, y = Latitude), size = 1) +
-    ggtitle("Répartition des bornes du \n Circuit Électrique au Québec")
+    geom_point(data = BorneQc, 
+               aes(x = Longitude, y = Latitude), 
+               size = 1) +
+    ggtitle("Répartition des bornes du Circuit Électrique au Québec") +
+  theme_nothing(legend = T)
 {% endhighlight %}
 ![plot of chunk unnamed-chunk-10](/figure/source/2016-11-07-googlemap/unnamed-chunk-10-1.png)
 
@@ -127,8 +130,13 @@ Les fonctionnalités disponibles avec **ggplot** sont utilisable ici. Par exempl
 
 {% highlight r %}
 Borne_point <-   ggmap(map) +
-    geom_point(data = BorneQc, aes(x = Longitude, y = Latitude, color = Type), size = 1) +
-    ggtitle("Répartition des bornes du \n Circuit Électrique au Québec")
+    geom_point(data = BorneQc, 
+               aes(x = Longitude, y = Latitude, color = Type), 
+               size = 1) +
+    ggtitle("Répartition des bornes du Circuit Électrique au Québec") +
+    scale_colour_manual(name = "", 
+                        values = c("Level2" = "blue", "FastDC" = "red")) +
+    theme_nothing(legend = T)
 {% endhighlight %}
 ![plot of chunk unnamed-chunk-12](/figure/source/2016-11-07-googlemap/unnamed-chunk-12-1.png)
 

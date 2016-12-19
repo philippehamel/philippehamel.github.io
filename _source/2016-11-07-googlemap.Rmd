@@ -47,11 +47,11 @@ Location <- c(-80, 40, -62, 52)
 
 Puis il faut créer un objet qui servira de base à la carte :
 ```{r include=FALSE}
-Location <- c(lat = 48.9536277, lon = -72.1478305)
-map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 6)
+Location <- "Quebec City"
+map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 11)
 ```
 ```{r, eval=FALSE}
-map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 6)
+map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 11)
 ```
 La fonction **get_map**, qui va chercher la carte dans google map, prend au minimum 4 arguments. L'argument **location** est le lieu que l'on veut avoir sur la carte. L'argument **zoom** est l'équivalent des + et - sur google map, il permet de s'éloigner ou se rapprocher du lieu qui à été sélectionné. L'arguement **source** est la source de provenance de la carte. Il il y a au moins 4 sources disponibles, et chacune a ses propres **maptype**.
 La *cheat sheet* suivante les explique mieux que j'en serais capable dans cet article : <https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf>.
@@ -59,8 +59,11 @@ La *cheat sheet* suivante les explique mieux que j'en serais capable dans cet ar
 La dernière étape est d'y superposer les points à l'aide de **ggplot** :
 ```{r warning=FALSE}
 Borne_point <-   ggmap(map) +
-    geom_point(data = BorneQc, aes(x = Longitude, y = Latitude), size = 1) +
-    ggtitle("Répartition des bornes du \n Circuit Électrique au Québec")
+    geom_point(data = BorneQc, 
+               aes(x = Longitude, y = Latitude), 
+               size = 1) +
+    ggtitle("Répartition des bornes du Circuit Électrique au Québec") +
+  theme_nothing(legend = T)
 ```
 ```{r, echo=FALSE, warning=FALSE}
 Borne_point
@@ -70,8 +73,13 @@ Les fonctionnalités disponibles avec **ggplot** sont utilisable ici. Par exempl
 
 ```{r warning=FALSE}
 Borne_point <-   ggmap(map) +
-    geom_point(data = BorneQc, aes(x = Longitude, y = Latitude, color = Type), size = 1) +
-    ggtitle("Répartition des bornes du \n Circuit Électrique au Québec")
+    geom_point(data = BorneQc, 
+               aes(x = Longitude, y = Latitude, color = Type), 
+               size = 1) +
+    ggtitle("Répartition des bornes du Circuit Électrique au Québec") +
+    scale_colour_manual(name = "", 
+                        values = c("Level2" = "blue", "FastDC" = "red")) +
+    theme_nothing(legend = T)
 ```
 ```{r, echo=FALSE, warning=FALSE}
 Borne_point
