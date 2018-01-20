@@ -10,7 +10,7 @@ output:
     mathjax:  default
 ---
 
-Afin de montrer comment utiliser **ggmap** pour localiser des points en utilisant R, je vais usiliser les données de localisation du Cicuit Électrique qui se trouve ici <https://lecircuitelectrique.com/trouver-une-borne>. J'ai inclus dans le fichier *data* un jeu de données préalablement nettoyé et dont les variable *string* ont été manipulées. Je ne montrerai pas comment manipuler des *string* aujourd'hui, ce sera le sujet d'un prochain tutoriel.
+Afin de montrer comment utiliser **ggmap** pour localiser des points en utilisant R, je vais usiliser les données de localisation du Circuit Électrique qui se trouve ici <https://lecircuitelectrique.com/trouver-une-borne>. J'ai inclus dans le fichier *data* un jeu de données préalablement nettoyé et dont les variable *string* ont été manipulées. Je ne montrerai pas comment manipuler des *string* aujourd'hui, ce sera le sujet d'un prochain tutoriel.
 ```{r}
 library(RCurl)
 x <- getURL("https://raw.githubusercontent.com/philippehamel/data-BlogueuR/master/Carte/BorneCE_16-09.csv")
@@ -22,20 +22,14 @@ head(Borne)
 ```
 
 Le *package* utilisé dans ce tutoriel est:
-```{r include=FALSE}
+```{r}
 require(ggmap)
 ```
-```{r, eval=FALSE}
-require(ggmap)
-```
+
 Avant de commencer, il est important de comprendre le concept de **ggmap**. Lorsque **ggplot** construit des graphiques, il superpose des couches, ou *layers*. La fonction *get_map* va nous permettre d'aller chercher une carte dont l'axe *x* est la longitude et l'axe *y* est la latitude, puis de l'utiliser comme base pour superposer des couches contenant des points.
 
 La première étape de la construction de la carte est le choix de la localisation. Il existe trois manière de sélectionner celle-ci.
 
-Avec une adresse :
-```{r}
-Location <- "Université Laval"
-```
 Les coordonnées d'un lieu :
 ```{r}
 Location <- c(lat = 47.558820, lon = -71.232386)
@@ -47,7 +41,6 @@ Location <- c(-80, 40, -62, 52)
 
 Puis il faut créer un objet qui servira de base à la carte :
 ```{r include=FALSE}
-Location <- "Quebec City"
 map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 11)
 ```
 ```{r, eval=FALSE}
@@ -69,7 +62,7 @@ Borne_point <-   ggmap(map) +
 Borne_point
 ```
 
-Les fonctionnalités disponibles avec **ggplot** sont utilisable ici. Par exemple, on peut changer la couleur des points selon des variables catégoriques. Le fichier de données donne une valeur différente pour chaque type de borne, recharge rapide ou 200 volt. On peut donc leur donner chacun une couleur différente avec l'arguement **color**
+Les fonctionnalités disponibles avec **ggplot** sont utilisables ici. Par exemple, on peut changer la couleur des points selon des variables catégoriques. Le fichier de données donne une valeur différente pour chaque type de borne, recharge rapide ou 200 volt. On peut donc leur donner chacun une couleur différente avec l'arguement **color**.
 
 ```{r warning=FALSE}
 Borne_point <-   ggmap(map) +

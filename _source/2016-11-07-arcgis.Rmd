@@ -26,9 +26,9 @@ require(ggmap)
 require(maptools)
 ```
 
-Une fois les *packages* installés, il faut utiliser la commande suivant pour importer les données du *shape file*
+Une fois les *packages* installés, il faut utiliser la commande suivante pour importer les données du *shape file*.
 ```{r, warning=FALSE}
-shp <- readOGR(dsn = "/Users/philippehamel1/Desktop/Blog/Map_R/data/shp", 
+shp <- readOGR(dsn = "/home/philippe/Documents/project/data-BlogueuR/Carte/shp", 
                layer = "Region_admin_region")
 ```
 L'argument **dsn** indique le répertoire où se situe le *shape file*. L'argument **layer** indique le préfixe des couches du *shape file*.
@@ -37,16 +37,16 @@ L'objet que l'on vient de créer contient beaucoup d'éléments et n'est pas man
 ```{r}
 summary(shp)
 ```
-Il contient 14 éléments, mais un seul de ceux-ci nous intéresse, celui qui correspond aux régions administratives. Dans le cas de notre *shape file*, c'est l'élément **resnmreg**.
+Il contient 14 éléments, mais un seul de ceux-ci nous intéresse. Celui qui correspond aux régions administratives. Dans le cas de notre *shape file*, c'est l'élément **resnmreg**.
 ```{r}
 levels(shp$resnmreg)
 ```
-Il faut utiliser la fontion **fortify** qui permet d'e créer un data.frame avec l'élément que l'on désire comme variable servant d'identifiant.
+Il faut utiliser la fontion **fortify** qui permet de créer un **data.frame** avec l'élément que l'on désire comme variable servant d'identifiant.
 ```{r}
 shape <- fortify(shp, region = "resnmreg")
 ```
 
-Pour des raisons d'éfficacité, nous allons générer les données que nous allons cartographier.
+Pour des raisons d'éfficacité, nous allons générer aléatoirement les données que nous allons cartographier.
 ```{r}
 set.seed(666)
 data <- data.frame(id = levels(shp$resnmreg), 
@@ -54,11 +54,11 @@ data <- data.frame(id = levels(shp$resnmreg),
                                   size =length(levels(shp$resnmreg)), 
                                   replace = T))
 ```
-Les données générer ressemble à ceci :
+Les données générer ressemblent à ceci :
 ```{r}
 head(data)
 ```
-Puis on joint les deux data.frame, *data* et *shape*. Il faut s'assurer que les deux data.frame possède une variable en commun et que cette variable est codée de la même manière. Ici on utilise la varaible *id* pour fusionner les deux jeux de données.
+Puis on joint les deux data.frame, *data* et *shape*. Il faut s'assurer que les deux **data.frame** possèdent une variable en commun et que cette variable est codée de la même manière. Ici on utilise la varaible *id* pour fusionner les deux jeux de données.
 ```{r, warning=FALSE}
 plot.data <- left_join(x = shape, y = data, by = "id")
 ```
@@ -69,7 +69,7 @@ carte <- ggplot() +
                  color = "black", size = 0.25) +
     scale_fill_distiller(direction = 1) +
     theme_nothing(legend = T) +
-    ggtitle("Répartition de la valeur aléatoire")
+    ggtitle("Répartition de valeur aléatoire")
 carte
 ```
 

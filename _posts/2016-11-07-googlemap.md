@@ -10,16 +10,10 @@ output:
     mathjax:  default
 ---
 
-Afin de montrer comment utiliser **ggmap** pour localiser des points en utilisant R, je vais usiliser les données de localisation du Cicuit Électrique qui se trouve ici <https://lecircuitelectrique.com/trouver-une-borne>. J'ai inclus dans le fichier *data* un jeu de données préalablement nettoyé et dont les variable *string* ont été manipulées. Je ne montrerai pas comment manipuler des *string* aujourd'hui, ce sera le sujet d'un prochain tutoriel.
+Afin de montrer comment utiliser **ggmap** pour localiser des points en utilisant R, je vais usiliser les données de localisation du Circuit Électrique qui se trouve ici <https://lecircuitelectrique.com/trouver-une-borne>. J'ai inclus dans le fichier *data* un jeu de données préalablement nettoyé et dont les variable *string* ont été manipulées. Je ne montrerai pas comment manipuler des *string* aujourd'hui, ce sera le sujet d'un prochain tutoriel.
 
 {% highlight r %}
 library(RCurl)
-{% endhighlight %}
-
-
-
-{% highlight text %}
-## Warning: package 'RCurl' was built under R version 3.2.4
 {% endhighlight %}
 
 
@@ -80,19 +74,26 @@ head(Borne)
 
 Le *package* utilisé dans ce tutoriel est:
 
-
 {% highlight r %}
 require(ggmap)
 {% endhighlight %}
+
+
+
+{% highlight text %}
+## Loading required package: ggmap
+{% endhighlight %}
+
+
+
+{% highlight text %}
+## Loading required package: ggplot2
+{% endhighlight %}
+
 Avant de commencer, il est important de comprendre le concept de **ggmap**. Lorsque **ggplot** construit des graphiques, il superpose des couches, ou *layers*. La fonction *get_map* va nous permettre d'aller chercher une carte dont l'axe *x* est la longitude et l'axe *y* est la latitude, puis de l'utiliser comme base pour superposer des couches contenant des points.
 
 La première étape de la construction de la carte est le choix de la localisation. Il existe trois manière de sélectionner celle-ci.
 
-Avec une adresse :
-
-{% highlight r %}
-Location <- "Université Laval"
-{% endhighlight %}
 Les coordonnées d'un lieu :
 
 {% highlight r %}
@@ -123,9 +124,9 @@ Borne_point <-   ggmap(map) +
     ggtitle("Répartition des bornes du Circuit Électrique au Québec") +
   theme_nothing(legend = T)
 {% endhighlight %}
-![plot of chunk unnamed-chunk-10](/figure/source/2016-11-07-googlemap/unnamed-chunk-10-1.png)
+![plot of chunk unnamed-chunk-8](/figure/source/2016-11-07-googlemap/unnamed-chunk-8-1.png)
 
-Les fonctionnalités disponibles avec **ggplot** sont utilisable ici. Par exemple, on peut changer la couleur des points selon des variables catégoriques. Le fichier de données donne une valeur différente pour chaque type de borne, recharge rapide ou 200 volt. On peut donc leur donner chacun une couleur différente avec l'arguement **color**
+Les fonctionnalités disponibles avec **ggplot** sont utilisables ici. Par exemple, on peut changer la couleur des points selon des variables catégoriques. Le fichier de données donne une valeur différente pour chaque type de borne, recharge rapide ou 200 volt. On peut donc leur donner chacun une couleur différente avec l'arguement **color**.
 
 
 {% highlight r %}
@@ -138,7 +139,7 @@ Borne_point <-   ggmap(map) +
                         values = c("Level2" = "blue", "FastDC" = "red")) +
     theme_nothing(legend = T)
 {% endhighlight %}
-![plot of chunk unnamed-chunk-12](/figure/source/2016-11-07-googlemap/unnamed-chunk-12-1.png)
+![plot of chunk unnamed-chunk-10](/figure/source/2016-11-07-googlemap/unnamed-chunk-10-1.png)
 
 **Note importante** : pour des utilisations académiques ou qui nécessitent une diffusion publique, ggmap demande de se faire citer de la manière suivante :
 
