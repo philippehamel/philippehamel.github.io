@@ -11,7 +11,7 @@ output:
 ---
 Si vous avez suivi les deux autres tutoriels, celui-ci ne posera aucune dificulté. Le concept est de superposer les données créées dans le tutoriel sur les fichiers **arcGIS** et la base créée dans le tutoriel sur les cartes google. Les **packages** nécessaires sont
 
-```{r echo=TRUE}
+```{r message=FALSE, warning=FALSE}
 require(ggplot2)
 require(rgdal)
 require(rgeos)
