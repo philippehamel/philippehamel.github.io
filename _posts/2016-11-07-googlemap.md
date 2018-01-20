@@ -109,6 +109,7 @@ Puis il faut créer un objet qui servira de base à la carte :
 
 
 {% highlight r %}
+Location <- c(lat = 46.812624, lon = -71.215353)
 map <- get_map(location = Location, source = "google", maptype = "roadmap", zoom = 11)
 {% endhighlight %}
 La fonction **get_map**, qui va chercher la carte dans google map, prend au minimum 4 arguments. L'argument **location** est le lieu que l'on veut avoir sur la carte. L'argument **zoom** est l'équivalent des + et - sur google map, il permet de s'éloigner ou se rapprocher du lieu qui à été sélectionné. L'arguement **source** est la source de provenance de la carte. Il il y a au moins 4 sources disponibles, et chacune a ses propres **maptype**.
